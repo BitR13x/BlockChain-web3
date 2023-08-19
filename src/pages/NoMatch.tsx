@@ -1,5 +1,5 @@
 import React from "react";
-import NavbarComponent from "./Navbar";
+import NavbarComponent from "../components/Navbar";
 
 const NoMatch = () => {
     return (
