@@ -1,17 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import {
-  BrowserRouter,
-  Routes,
-  Route
-} from "react-router-dom";
-import './scss/index.scss';
-import App from './App';
-import Dashboard from "./pages/Dashboard";
-import NoMatch from "./components/NoMatch";
+import { RouterProvider } from "react-router-dom";
+
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { Provider } from 'react-redux';
+import { createConfig, configureChains, WagmiConfig } from "wagmi";
+import { publicProvider } from "wagmi/providers/public";
+import { mainnet, localhost } from "wagmi/chains";
+
+import './scss/index.scss';
 import { store } from './store'
+import Router from "./router";
 
 const theme = createTheme({
   palette: {
@@ -30,25 +29,32 @@ const theme = createTheme({
   }
 });
 
+
+
 async function initApp() {
   const rootElement = document.getElementById('root') as HTMLElement;
   if (!rootElement) throw new Error('Failed to find the root element');
   const root = ReactDOM.createRoot(rootElement)
 
+  const { publicClient, webSocketPublicClient } = configureChains(
+    [localhost],
+    [publicProvider()]
+  );
+
+  const config = createConfig({
+    autoConnect: true,
+    publicClient,
+    webSocketPublicClient,
+  });
+
   root.render(
     <React.StrictMode>
       <ThemeProvider theme={theme}>
-        <Provider store={store}>
-          <BrowserRouter>
-            <Routes>
-              {/* 
-              @ts-ignore */}
-              <Route path="/" element={<App />} exact />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="*" element={<NoMatch />} />
-            </Routes>
-          </BrowserRouter>
-        </Provider>
+        <WagmiConfig config={config}>
+          <Provider store={store}>
+            <RouterProvider router={Router} />
+          </Provider>
+        </WagmiConfig>
       </ThemeProvider>
     </React.StrictMode>
   );
