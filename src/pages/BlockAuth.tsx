@@ -11,7 +11,7 @@ const BlockAuth = () => {
 
     const { connectAsync } = useConnect();
     const { disconnectAsync } = useDisconnect();
-    const { isConnected, address } = useAccount();
+    const { isConnected } = useAccount();
     const { signMessageAsync } = useSignMessage();
 
     const handleAuth = async () => {
@@ -38,7 +38,7 @@ const BlockAuth = () => {
 
         const message_object = {
             message: `${window.location.hostname} wants you to sign in with your Ethereum account:\n` +
-                `${address}\n` +
+                `${account}\n` +
                 '\n' +
                 `'Please sign this message to confirm your identity.'\n` +
                 '\n' +
@@ -58,7 +58,7 @@ const BlockAuth = () => {
             {
                 message,
                 signature,
-                address: address
+                address: account
             },
             {
                 withCredentials: true,
